@@ -1,0 +1,30 @@
+{
+  "parser": "babel",
+  "trailingComma": "es5",
+  "semi": true,
+  "tabWidth": 2,
+  "printWidth": 210,
+  "useTabs": false,
+  "singleQuote": true,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": ["*.html"],
+      "options": {
+        "parser": "html"
+      }
+    },
+    {
+      "files": ["*.css"],
+      "options": {
+        "parser": "css"
+      }
+    },
+    {
+      "files": ["*.less"],
+      "options": {
+        "parser": "less"
+      }
+    }
+  ]
+}
