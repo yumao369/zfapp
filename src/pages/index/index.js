@@ -1,12 +1,11 @@
 import React from "react";
-import { Carousel } from "antd-mobile";
+import { Carousel, Flex, Grid, WingBlank } from "antd-mobile";
 import axios from "axios";
-import { Flex, WhiteSpace } from "antd-mobile";
 import Nav1 from "../../assets/images/nav-1.png";
 import Nav2 from "../../assets/images/nav-2.png";
 import Nav3 from "../../assets/images/nav-3.png";
 import Nav4 from "../../assets/images/nav-4.png";
-import "./index.css";
+import "./index.scss";
 
 //导航菜单数据
 const navs = [
@@ -52,6 +51,10 @@ export default class Index extends React.Component {
     //轮播图状态数据
     swipers: [],
     isSwiperLoaded: false,
+    //租房小组数据
+    groups: [],
+    //最新资讯数据
+    news: [],
   };
 
   //获取轮播图数据的方法
@@ -68,6 +71,31 @@ export default class Index extends React.Component {
         isSwiperLoaded: true,
       }
     );
+  }
+
+  //获取租房小组数据的方法
+  async getGroups() {
+    const res = await axios.get("http://localhost:8009/home/groups", {
+      params: {
+        area: "AREA%7C88cff55c-aaa4-e2e0",
+      },
+    });
+    this.setState({
+      groups: res.data.body,
+    });
+  }
+
+  //获取最新资讯数据的方法
+  async getNews() {
+    const res = await axios.get("http://localhost:8009/home/news", {
+      params: {
+        area: "AREA%7C88cff55c-aaa4-e2e0",
+      },
+    });
+    // console.log(res);
+    this.setState({
+      news: res.data.body,
+    });
   }
 
   //渲染轮播图结构
@@ -104,8 +132,32 @@ export default class Index extends React.Component {
     ));
   }
 
+  //渲染最新资讯
+  renderNews() {
+    return this.state.news.map((item) => (
+      <div className="news-item" key={item.id}>
+        <div className="imgwrap">
+          <img
+            className="img"
+            src={`http://localhost:8009${item.imgSrc}`}
+            alt=""
+          />
+        </div>
+        <Flex className="content" direction="column" justify="between">
+          <h3 className="title">{item.title}</h3>
+          <Flex className="info" justify="between">
+            <span>{item.from}</span>
+            <span>{item.date}</span>
+          </Flex>
+        </Flex>
+      </div>
+    ));
+  }
+
   componentDidMount() {
     this.getSwipers();
+    this.getGroups();
+    this.getNews();
   }
   render() {
     return (
@@ -123,6 +175,35 @@ export default class Index extends React.Component {
 
         {/* 导航菜单 */}
         <Flex className="nav">{this.renderNavs()}</Flex>
+
+        {/* 租房小组 */}
+        <div className="group">
+          <h3 className="group-title">
+            租房小组 <span className="more">更多</span>
+          </h3>
+
+          <Grid
+            data={this.state.groups}
+            columnNum={2}
+            square={false}
+            hasLine={false}
+            renderItem={(item) => (
+              <Flex className="group-item" justify="around" key={item.id}>
+                <div className="desc">
+                  <p className="title">{item.title}</p>
+                  <span className="info">{item.desc}</span>
+                </div>
+                <img src={`http://localhost:8009${item.imgSrc}`} alt="" />
+              </Flex>
+            )}
+          ></Grid>
+        </div>
+
+        {/* 最新资讯 */}
+        <div className="news">
+          <h3 className="group-title">最新资讯</h3>
+          <WingBlank className="md">{this.renderNews()}</WingBlank>
+        </div>
       </div>
     );
   }
