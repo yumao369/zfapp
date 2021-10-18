@@ -3,9 +3,9 @@ import { Route } from "react-router-dom";
 import News from "../News";
 import Index from "../index";
 import Profile from "../Profile";
+import "./index.css";
 import HouseList from "../HouseList";
 import { TabBar } from "antd-mobile";
-import "./index.css";
 
 const tabItems = [
   {

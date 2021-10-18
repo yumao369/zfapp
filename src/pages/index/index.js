@@ -5,6 +5,10 @@ import Nav1 from "../../assets/images/nav-1.png";
 import Nav2 from "../../assets/images/nav-2.png";
 import Nav3 from "../../assets/images/nav-3.png";
 import Nav4 from "../../assets/images/nav-4.png";
+
+import { getCurrentCity } from "../../utils";
+import { BASE_URL } from "../../utils/url";
+import SearchHeader from "../../components/searchHeader";
 import "./index.scss";
 
 //导航菜单数据
@@ -35,6 +39,11 @@ const navs = [
   },
 ];
 
+//获取地理位置信息
+// navigator.geolocation.getCurrentPosition((position) => {
+//   console.log("当前位置信息：", position);
+// });
+
 /**轮播图经常遇到的问题：
  * 1、不会自动轮播
  * 2、从其他路由返回时，高度不够
@@ -48,6 +57,7 @@ const navs = [
  */
 export default class Index extends React.Component {
   state = {
+    //react中的数据变化都通过状态进行体现
     //轮播图状态数据
     swipers: [],
     isSwiperLoaded: false,
@@ -55,6 +65,8 @@ export default class Index extends React.Component {
     groups: [],
     //最新资讯数据
     news: [],
+    //当前城市名称
+    curCityName: "",
   };
 
   //获取轮播图数据的方法
@@ -111,7 +123,7 @@ export default class Index extends React.Component {
         }}
       >
         <img
-          src={`http://localhost:8009${item.imgSrc}`}
+          src={BASE_URL + item.imgSrc}
           alt=""
           style={{ width: "100%", verticalAlign: "top" }}
         />
@@ -154,10 +166,38 @@ export default class Index extends React.Component {
     ));
   }
 
-  componentDidMount() {
+  // MP(ak) {
+  //   return new Promise(function (resolve, reject) {
+  //     var script = document.createElement("script");
+  //     script.type = "text/javascript";
+  //     script.src = `http://api.map.baidu.com/api?v=2.0&ak=${ak}&callback=init`;
+  //     document.head.appendChild(script);
+  //     window.init = () => {
+  //       resolve(window.BMap);
+  //     };
+  //   });
+  // }
+  async componentDidMount() {
     this.getSwipers();
     this.getGroups();
     this.getNews();
+    const curCity = await getCurrentCity();
+    this.setState({
+      curCityName: curCity.label,
+    });
+    // this.MP("dRsYjwYwSXWlasTrxA7OGSjkocvmvB8u").then((BMap) => {
+    //   const curCity = new BMap.LocalCity();
+    //   curCity.get(async (res) => {
+    //     // console.log("当前城市信息：", res);
+    //     const result = await axios.get(
+    //       `http://localhost:8009/area/info?name=${res.name}`
+    //     );
+    //     // console.log(result);
+    //     this.setState({
+    //       curCityName: result.data.body.label,
+    //     });
+    //   });
+    // });
   }
   render() {
     return (
@@ -171,6 +211,9 @@ export default class Index extends React.Component {
           ) : (
             ""
           )}
+
+          {/* 搜索框 */}
+          <SearchHeader cityName={this.state.curCityName}></SearchHeader>
         </div>
 
         {/* 导航菜单 */}
